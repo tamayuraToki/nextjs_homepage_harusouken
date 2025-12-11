@@ -62,9 +62,12 @@ export default function Header() {
           ${isOpen ? "block" : "hidden"} sm:flex
         `}
       >
-        <Link href="/business" className="hover:underline" onClick={() => setIsOpen(false)}>事業案内</Link>
-        <Link href="/philosophy" className="hover:underline" onClick={() => setIsOpen(false)}>企業理念</Link>
-        <Link href="/contact" className="hover:underline" onClick={() => setIsOpen(false)}>お問い合わせ</Link>
+        <div className="flex gap-6 whitespace-nowrap">
+          <Link href="/business" className="hover:underline" onClick={() => setIsOpen(false)}>事業案内</Link>
+          <Link href="/philosophy" className="hover:underline" onClick={() => setIsOpen(false)}>企業理念</Link>
+          <Link href="/contact" className="hover:underline" onClick={() => setIsOpen(false)}>お問い合わせ</Link>
+        </div>
+
       </nav>
     </header>
   );
