@@ -1,76 +1,61 @@
-"use client";
+"use server";
 
-import { useState, useEffect } from "react";
-import { generateClient } from "aws-amplify/data";
-import type { Schema } from "@/amplify/data/resource";
+import { list, getUrl } from "aws-amplify/storage";
+import Image from "next/image";
+
 import { Amplify } from "aws-amplify";
+import ImageSlider from "@/app/components/ImageSlider";
 import outputs from "@/amplify_outputs.json";
-//mport "@aws-amplify/ui-react/styles.css";
 
 Amplify.configure(outputs);
 
-const client = generateClient<Schema>();
+export default async function Page() {
 
-export default function App() {
-  const [todos, setTodos] = useState<Array<Schema["Todo"]["type"]>>([]);
+  // 対象フォルダ内のすべての画像を取得
+  const listResult = await list({
+    path: "images/top-page-animation/",
+    options: { listAll: true }
+  });
 
-  function listTodos() {
-    client.models.Todo.observeQuery().subscribe({
-      next: (data) => setTodos([...data.items]),
-    });
-  }
+  // 画像のみ抽出
+  const imageItems = listResult.items.filter(item =>
+    item.path.endsWith(".jpg") ||
+    item.path.endsWith(".png") ||
+    item.path.endsWith(".jpeg") ||
+    item.path.endsWith(".webp")
+  );
 
-  useEffect(() => {
-    listTodos();
-  }, []);
+  //各画像のURLを取得
+  const images = await Promise.all(
+    imageItems.map(async (item) => {
+      const { url } = await getUrl({ path: item.path });
+      return { path: item.path, url: url.toString() };
+    })
+  );
 
-  function createTodo() {
-    client.models.Todo.create({
-      content: window.prompt("Todo content"),
-    });
-  }
+  return (
+    <div className="font-sans min-h-screen p-8 pb-20 sm:p-20">
+      <main className="flex flex-col gap-16 items-center sm:items-start">
 
-return (
-  <div className="font-sans min-h-screen flex justify-center items-center bg-gray-100 px-4">
-    <main className="bg-white shadow-lg rounded-xl p-8 w-full max-w-lg space-y-6">
-      <h1 className="text-3xl font-extrabold text-center text-gray-800">
-        My todos
-      </h1>
+        {/* --- 画像のスライドショー作成--- */}
+        <ImageSlider images={images.map(img => img.url)} />
 
-      <button
-        onClick={createTodo}
-        className="
-          bg-blue-600 text-white px-5 py-2 rounded-lg
-          hover:bg-blue-700 transition
-          w-full font-medium
-        "
-      >
-        + New Todo
-      </button>
+        <section className="w-full text-left">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-semibold tracking-wide mb-6">
+            - 挨拶 -
+          </h1>
 
-      <ul className="space-y-2">
-        {todos.map((todo) => (
-          <li
-            key={todo.id}
-            className="border border-gray-200 p-3 rounded-md text-gray-700 bg-gray-50"
-          >
-            {todo.content}
-          </li>
-        ))}
-      </ul>
+          <div className="space-y-4 text-base sm:text-lg leading-relaxed text-gray-800">
+            <p>
+              晴総建は主に住宅基礎工事、外構工事、造成や擁壁等の土木工事等を行っています。
+            </p>
+            <p>
+              高品質なモノ作りを追求する為、丁寧で正確な仕事を日々心がけています。
+            </p>
+          </div>
+        </section>
 
-      <div className="text-sm text-gray-600 text-center border-t pt-4">
-        🥳 App successfully hosted. Try creating a new todo.
-        <br />
-        <a
-          href="https://docs.amplify.aws/nextjs/start/quickstart/nextjs-app-router-client-components/"
-          className="text-blue-600 hover:underline"
-        >
-          Review next steps of this tutorial
-        </a>
-      </div>
-    </main>
-  </div>
-);
-
+      </main>
+    </div>
+  );
 }

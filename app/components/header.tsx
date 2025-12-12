@@ -63,8 +63,9 @@ export default function Header() {
         `}
       >
         <div className="flex gap-6 whitespace-nowrap">
-          <Link href="/business" className="hover:underline" onClick={() => setIsOpen(false)}>事業案内</Link>
+          <Link href="/companyInfo" className="hover:underline" onClick={() => setIsOpen(false)}>会社情報</Link>
           <Link href="/philosophy" className="hover:underline" onClick={() => setIsOpen(false)}>企業理念</Link>
+          <Link href="/recruit" className="hover:underline" onClick={() => setIsOpen(false)}>採用情報</Link>
           <Link href="/contact" className="hover:underline" onClick={() => setIsOpen(false)}>お問い合わせ</Link>
         </div>
 

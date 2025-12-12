@@ -31,11 +31,9 @@ export default function RootLayout({
     <html lang="ja">
       <body className="min-h-screen flex flex-col">
       <Header />
-      < main  >
+      < main  className="pt-[32px]">
         {children}
       </main>
-
-        
       <Footer />
     </body>
     </html>
