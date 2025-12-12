@@ -1,3 +1,5 @@
+"use client"; 
+
 import { getUrl } from "aws-amplify/storage";
 import Image from "next/image";
 
